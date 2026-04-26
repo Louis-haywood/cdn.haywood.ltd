@@ -1,0 +1,6 @@
+node_modules/
+server/uploads/
+server/.env
+watcher/.env
+*.pem
+*.pfx
