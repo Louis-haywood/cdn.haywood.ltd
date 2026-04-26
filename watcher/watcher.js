@@ -42,9 +42,17 @@ async function uploadFile(filePath) {
 
     console.log(`Done!  ${data.url}`);
 
-    // Copy the URL to the Windows clipboard
-    execSync(`powershell -command "Set-Clipboard -Value '${data.url}'"`);
-    console.log('(URL copied to clipboard)');
+    // Copy URL to clipboard — platform-aware
+    try {
+      if (process.platform === 'darwin') {
+        execSync(`echo ${JSON.stringify(data.url)} | pbcopy`);
+      } else {
+        execSync(`powershell -command "Set-Clipboard -Value '${data.url}'"`);
+      }
+      console.log('(URL copied to clipboard)');
+    } catch (_) {
+      // clipboard copy is best-effort — don't fail the upload over it
+    }
   } catch (err) {
     const msg = err.response?.data?.error ?? err.message;
     console.error(`Upload failed: ${msg}`);
